@@ -46,7 +46,7 @@ const styled = StyleSheet.create({
     borderWidth: 1,
     borderColor: THEME.COLORS.GREEN_700,
     marginTop: 16,
-    backgroundColor: THEME.COLORS.GRAY_700,
+    backgroundColor: 'transparent',
     alignItems: "center",
     justifyContent: "center",
   },

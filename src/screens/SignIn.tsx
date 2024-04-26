@@ -12,12 +12,21 @@ import backgroundImg from "../assets/background.png";
 import LogoSVG from "../assets/logo.svg";
 import { InputComponent } from "../components/InputComponet";
 import { ButtonComponent } from "../components/ButtonComponent";
+import { useNavigation } from "@react-navigation/native";
+import { AuthNavigatorRoutesPublicProps } from "../routes/auth.routes";
 
-export function SigngIn() {
+export function SignIn() {
+
+  const navigator = useNavigation<AuthNavigatorRoutesPublicProps>()
+
+
+  function handleNavigateSingUp(){
+    navigator.navigate('signUp')
+  }
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
-      style={{ backgroundColor: THEME.COLORS.GRAY_700 }}
+      // style={{ backgroundColor: THEME.COLORS.GRAY_700 }}
     >
       <SafeAreaView style={styled.safeAreaStyle}>
         <Image source={backgroundImg} style={styled.backgroundImgStyle} />
@@ -52,7 +61,7 @@ export function SigngIn() {
                 Ainda não tem acesso?
               </Text>
 
-              <ButtonComponent variant="OUTLINE" title="Criar conta" />
+              <ButtonComponent variant="OUTLINE" title="Criar conta" onPress={handleNavigateSingUp}/>
             </View>
           </View>
         </View>
@@ -68,7 +77,7 @@ const styled = StyleSheet.create({
     paddingBottom: 150,
     // justifyContent: "space-around",
     alignItems: "center",
-    backgroundColor: THEME.COLORS.GRAY_700,
+    // backgroundColor: THEME.COLORS.GRAY_700,
   },
   container: {
     flex: 1,
