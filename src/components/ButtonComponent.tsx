@@ -8,24 +8,14 @@ import { THEME } from "../themes";
 
 interface ButtonComponentProps extends TouchableOpacityProps {
   title: string;
-  type?: "Default" | "Active";
+  variant?: "OUTLINE" | "SOLID";
+
 }
 
-export function ButtonComponent({
-  title,
-  type = "Active",
-  ...resto
-}: ButtonComponentProps) {
+export function ButtonComponent({ title, variant = "SOLID", ...resto}: ButtonComponentProps) {
   return (
-    <TouchableOpacity
-      {...resto}
-      style={type === "Active" ? styled.buttonActive : styled.buttonDefault}
-    >
-      <Text
-        style={
-          type === "Active" ? styled.buttonActiveText : styled.buttonDefaultText
-        }
-      >
+    <TouchableOpacity {...resto} style={variant === "SOLID" ? styled.buttonSolid : styled.buttonOutline}>
+      <Text style={variant === "SOLID" ? styled.buttonSolidText : styled.buttonOutlineText}>
         {title}
       </Text>
     </TouchableOpacity>
@@ -33,34 +23,34 @@ export function ButtonComponent({
 }
 
 const styled = StyleSheet.create({
-  buttonActive: {
+  buttonSolid: {
     width: "100%",
     height: 56,
     borderRadius: 8,
-    marginTop: 32,
+    marginTop: 16,
     backgroundColor: THEME.COLORS.GREEN_700,
     fontSize: THEME.FONT_SIZE.MD,
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonActiveText: {
+  buttonSolidText: {
     color: THEME.COLORS.GRAY_200,
     fontSize: THEME.FONT_SIZE.MD,
     fontWeight: "bold",
   },
 
-  buttonDefault: {
+  buttonOutline: {
     width: "100%",
     height: 56,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: THEME.COLORS.GREEN_700,
-    marginTop: 32,
+    marginTop: 16,
     backgroundColor: THEME.COLORS.GRAY_700,
     alignItems: "center",
     justifyContent: "center",
   },
-  buttonDefaultText: {
+  buttonOutlineText: {
     color: THEME.COLORS.GREEN_700,
     fontSize: THEME.FONT_SIZE.MD,
     fontWeight: "bold",

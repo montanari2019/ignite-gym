@@ -8,6 +8,7 @@ import {
 import { Loading } from "./src/components/Loading";
 import { THEME } from "./src/themes";
 import { SigngIn } from "./src/screens/Singin";
+import { SingUp } from "./src/screens/SingUp";
 
 export default function App() {
   const [fontsLoaded] = useFonts({ Roboto_400Regular, Roboto_700Bold });
@@ -20,7 +21,7 @@ export default function App() {
       />
       {fontsLoaded ? (
         <>
-          <SigngIn />
+          <SingUp />
         </>
       ) : (
         <Loading />

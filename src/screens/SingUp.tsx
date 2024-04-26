@@ -13,7 +13,7 @@ import LogoSVG from "../assets/logo.svg";
 import { InputComponent } from "../components/InputComponet";
 import { ButtonComponent } from "../components/ButtonComponent";
 
-export function SigngIn() {
+export function SingUp() {
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
@@ -30,12 +30,18 @@ export function SigngIn() {
           </View>
 
           <View style={styled.sectionInput}>
-            <Text style={styled.titleSectionInputStyle}>Acesse sua conta</Text>
+            <Text style={styled.titleSectionInputStyle}>Crie sua conta</Text>
 
             <InputComponent
-              placeholder="Digite seu email"
+              placeholder="Nome"
               keyboardAppearance="dark"
-              keyboardType="email-address"
+              keyboardType="default"
+              key={"inputnome"}
+            />
+            <InputComponent
+              placeholder="Email"
+              keyboardAppearance="dark"
+              keyboardType="default"
               key={"inputemail"}
             />
             <InputComponent
@@ -44,15 +50,21 @@ export function SigngIn() {
               secureTextEntry
               key={"inputSenha"}
             />
+            <InputComponent
+              placeholder="Confirme sua Senha"
+              keyboardAppearance="dark"
+              secureTextEntry
+              key={"inputConfirmSenha"}
+            />
 
-            <ButtonComponent variant="SOLID" title="Acessar" />
+            <ButtonComponent variant="SOLID" title="Criar e acessar" />
 
-            <View>
-              <Text style={styled.titleSectionFormsStyle}>
+            <View style={{marginTop: (16*4)}} >
+              {/* <Text style={styled.titleSectionFormsStyle}>
                 Ainda não tem acesso?
-              </Text>
+              </Text> */}
 
-              <ButtonComponent variant="OUTLINE" title="Criar conta" />
+              <ButtonComponent variant="OUTLINE" title="Voltar para login" />
             </View>
           </View>
         </View>
