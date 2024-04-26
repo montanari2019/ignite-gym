@@ -29,7 +29,7 @@ export function SignIn() {
       // style={{ backgroundColor: THEME.COLORS.GRAY_700 }}
     >
       <SafeAreaView style={styled.safeAreaStyle}>
-        <Image source={backgroundImg} style={styled.backgroundImgStyle} />
+        <Image source={backgroundImg} defaultSource={backgroundImg} style={styled.backgroundImgStyle} />
 
         <View style={styled.container}>
           <View>
