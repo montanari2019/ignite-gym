@@ -86,7 +86,8 @@ const styled = StyleSheet.create({
   safeAreaStyle: {
     flex: 1,
     width: "100%",
-    paddingBottom: 150,
+    // paddingBottom: 150,
+    paddingTop: 50,
     // justifyContent: "space-around",
     alignItems: "center",
     // backgroundColor: THEME.COLORS.GRAY_700,

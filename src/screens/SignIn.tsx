@@ -75,6 +75,7 @@ const styled = StyleSheet.create({
     flex: 1,
     width: "100%",
     paddingBottom: 150,
+    paddingTop: 100,
     // justifyContent: "space-around",
     alignItems: "center",
     // backgroundColor: THEME.COLORS.GRAY_700,
