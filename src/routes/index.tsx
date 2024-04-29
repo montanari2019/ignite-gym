@@ -1,4 +1,4 @@
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import { NavigationContainer, DefaultTheme ,} from "@react-navigation/native";
 import { AuthRoutes } from "./auth.routes";
 import { THEME } from "../themes";
 import { View } from "react-native";
