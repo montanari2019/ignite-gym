@@ -4,6 +4,8 @@ import { GroupButton } from "../components/GroupButton";
 import { useState } from "react";
 import { THEME } from "../themes";
 import { CardExecicio } from "../components/CardExercise";
+import { useNavigation } from "@react-navigation/native";
+import { AuthNavigatorRoutesPrivadeProps } from "../routes/app.routes";
 
 const buttonItens = [
   "Costas",
@@ -51,18 +53,24 @@ type ExercicioProps = typeof exerciciosDefault;
 export function Home() {
   const [buttonPress, setButtonPress] = useState("");
   const [exercicios, setExercicios] = useState<ExercicioProps>(exerciciosDefault);
+
+  const navigation = useNavigation<AuthNavigatorRoutesPrivadeProps>()
+
+  function handleOpenExerciseCardDetails(){
+    navigation.navigate("exercise")
+  }
   return (
     <View style={{ flex: 1 }}>
       <HomeHeader />
 
       <FlatList
-        style={{ maxHeight: 60 }}
+        style={{ maxHeight: 80 }}
         data={buttonItens}
         keyExtractor={(item) => item}
         contentContainerStyle={{
-          maxHeight: 56,
+          maxHeight: 70,
           gap: 5,
-          padding: 5,
+          padding: 25,
           paddingLeft: 25,
         }}
         horizontal
@@ -95,6 +103,7 @@ export function Home() {
               title={item.title}
               subTitle={item.subTitle}
               imgUrl={item.imgUrl}
+              onPress={() => handleOpenExerciseCardDetails()}
             />
           )}
         />

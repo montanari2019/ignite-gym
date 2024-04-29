@@ -34,7 +34,7 @@ const styled = StyleSheet.create({
     justifyContent: "center",
   },
   buttonSolidText: {
-    color: THEME.COLORS.GRAY_200,
+    color: THEME.COLORS.GRAY_100,
     fontSize: THEME.FONT_SIZE.MD,
     fontWeight: "bold",
   },

@@ -12,8 +12,8 @@ export function CardHistoricoExercicio({ subTitle, time, title }:CardHistoricoEx
   return (
     <View style={styled.container}>
       <View style={styled.sectionCard}>
-        <Text style={styled.containerTextBold}>{title}</Text>
-        <Text style={styled.containerTextRegular}>{subTitle}</Text>
+        <Text style={styled.containerTextBold} numberOfLines={1}>{title}</Text>
+        <Text style={styled.containerTextRegular} numberOfLines={1}>{subTitle}</Text>
       </View>
 
       <Text  style={styled.containerTextTime}>{time}</Text>
@@ -44,6 +44,7 @@ const styled = StyleSheet.create({
         color: THEME.COLORS.GRAY_300,
     },
     containerTextBold:{
+  
         fontSize: THEME.FONT_SIZE.MD,
         fontWeight: 'bold',
         color: THEME.COLORS.GRAY_100,
