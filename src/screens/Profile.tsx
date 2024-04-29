@@ -34,9 +34,7 @@ export function Profile() {
       }
 
       if (imgSelected.assets[0].uri) {
-        const file = (await FileSysten.getInfoAsync(
-          imgSelected.assets[0].uri
-        )) as any;
+        const file = (await FileSysten.getInfoAsync(imgSelected.assets[0].uri)) as any;
 
         if (file.size && file.size / 1024 / 1024 > 5) {
           return Alert.alert(
