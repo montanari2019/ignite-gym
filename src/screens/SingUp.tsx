@@ -55,12 +55,7 @@ const singUpSchema = yup.object({
 export function SingUp() {
   const navigator = useNavigation();
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormsDataProps>({
+  const { control, handleSubmit, reset, formState: { errors },} = useForm<FormsDataProps>({
     resolver: yupResolver(singUpSchema),
   });
 

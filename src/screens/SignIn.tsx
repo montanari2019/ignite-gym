@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   SafeAreaView,
   ScrollView,
@@ -15,25 +16,78 @@ import { ButtonComponent } from "../components/ButtonComponent";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorRoutesPublicProps } from "../routes/auth.routes";
 import { AuthNavigatorRoutesPrivadeProps } from "../routes/app.routes";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Controller, useForm } from "react-hook-form";
+import { useAuth } from "../context/AuthHook";
+import { AppError } from "../utils/App.Error";
+import { useState } from "react";
+import { Loading } from "../components/Loading";
+
+type FormsDataProps = {
+  email: string;
+  password: string;
+};
+
+const singInSchema = yup.object({
+  email: yup
+    .string()
+    .email("Insira um email válido")
+    .required("O email é obrigatório"),
+
+  password: yup
+    .string()
+    .required("A senha é obrigatória")
+    .min(3, "A senha deve ter no mínimo 3 caracteres"),
+});
 
 export function SignIn() {
+  const navigator = useNavigation<AuthNavigatorRoutesPublicProps>();
 
-  const navigator = useNavigation<AuthNavigatorRoutesPublicProps>()
+  const { handleSingIn } = useAuth();
+  const [isLoading, setIsLoading] = useState(false)
 
+  const { control, handleSubmit, reset, formState: { errors },} = useForm<FormsDataProps>({
+    resolver: yupResolver(singInSchema),
+  });
 
-  function handleNavigateSingUp(){
-    navigator.navigate('signUp')
+  function handleNavigateSingUp() {
+    navigator.navigate("signUp");
   }
-  function handleNavigateHomeAuth(){
-    navigator.navigate('homeAuth')
+  function handleNavigateHomeAuth() {
+    navigator.navigate("homeAuth");
   }
+
+  async function handleSingInComponent({ email, password }: FormsDataProps) {
+    try {
+
+      setIsLoading(true)
+      await handleSingIn(email, password);
+    } catch (error) {
+      
+      
+      setIsLoading(false)
+     if(error instanceof AppError){
+        Alert.alert("Login", error.message)
+      }else {
+        Alert.alert("Login","Não foi possível fazer login")
+        console.log(error);
+
+      }
+    }
+  }
+  //
   return (
     <ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
       // style={{ backgroundColor: THEME.COLORS.GRAY_700 }}
     >
       <SafeAreaView style={styled.safeAreaStyle}>
-        <Image source={backgroundImg} defaultSource={backgroundImg} style={styled.backgroundImgStyle} />
+        <Image
+          source={backgroundImg}
+          defaultSource={backgroundImg}
+          style={styled.backgroundImgStyle}
+        />
 
         <View style={styled.container}>
           <View>
@@ -45,27 +99,57 @@ export function SignIn() {
           <View style={styled.sectionInput}>
             <Text style={styled.titleSectionInputStyle}>Acesse sua conta</Text>
 
-            <InputComponent
-              placeholder="Digite seu email"
-              keyboardAppearance="dark"
-              keyboardType="email-address"
-              key={"inputemail"}
+            <Controller
+              control={control}
+              name="email"
+              render={({ field: { onChange, value } }) => (
+                <InputComponent
+                  placeholder="Email"
+                  keyboardAppearance="dark"
+                  keyboardType="default"
+                  key={"inputemail"}
+                  value={value}
+                  errorMessage={errors.email?.message}
+                  onChangeText={onChange}
+                />
+              )}
             />
-            <InputComponent
-              placeholder="Senha"
-              keyboardAppearance="dark"
-              secureTextEntry
-              key={"inputSenha"}
+            <Controller
+              control={control}
+              name="password"
+              render={({ field: { onChange, value } }) => (
+                <InputComponent
+                  placeholder="Senha"
+                  keyboardAppearance="dark"
+                  secureTextEntry
+                  key={"inputSenha"}
+                  value={value}
+                  errorMessage={errors.password?.message}
+                  onSubmitEditing={handleSubmit(handleSingInComponent)}
+                  returnKeyType="send"
+                  onChangeText={onChange}
+                />
+              )}
             />
 
-            <ButtonComponent variant="SOLID" title="Acessar" onPress={handleNavigateHomeAuth} />
+        
+            <ButtonComponent
+              variant="SOLID"
+              title="Acessar"
+              isLoading={isLoading}
+              onPress={handleSubmit(handleSingInComponent)}
+            />
 
             <View>
               <Text style={styled.titleSectionFormsStyle}>
                 Ainda não tem acesso?
               </Text>
 
-              <ButtonComponent variant="OUTLINE" title="Criar conta" onPress={handleNavigateSingUp}/>
+              <ButtonComponent
+                variant="OUTLINE"
+                title="Criar conta"
+                onPress={handleNavigateSingUp}
+              />
             </View>
           </View>
         </View>

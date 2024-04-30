@@ -5,20 +5,22 @@ import { View } from "react-native";
 import { AppRoutes } from "./app.routes";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useAuth } from "../context/AuthHook";
 
 export function Routes() {
   const theme = DefaultTheme;
   theme.colors.background = THEME.COLORS.GRAY_700;
 
-  const contextData = useContext(AuthContext)
+  const { user } = useAuth()
 
-  console.log(contextData)
+
 
   return (
     <View style={{flex: 1, backgroundColor: THEME.COLORS.GRAY_700}}>
       <NavigationContainer theme={theme}>
-        <AuthRoutes />
-        {/* <AppRoutes/> */}
+        {user.id  ? <AppRoutes/>: <AuthRoutes />}
+        
+
       </NavigationContainer>
     </View>
   );
