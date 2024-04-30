@@ -1,9 +1,15 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { THEME } from "../themes";
 import { Avatar } from "./ImgUser";
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { AuthNavigatorRoutesPrivadeProps } from "../routes/app.routes";
 
 export function HomeHeader() {
+
+  const navigation = useNavigation<AuthNavigatorRoutesPrivadeProps>()
+
+ 
   return (
     <View style={styled.container}>
       <Avatar
@@ -17,7 +23,9 @@ export function HomeHeader() {
         <Text style={styled.titleStyleBold}>Rodrigo Gonçalves </Text>
       </View>
 
-      <MaterialIcons name="logout" size={28} color={THEME.COLORS.GRAY_100} />
+      <TouchableOpacity>
+        <MaterialIcons name="logout" size={28} color={THEME.COLORS.GRAY_100} />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -31,21 +39,18 @@ const styled = StyleSheet.create({
     padding: 16,
     paddingTop: 50,
     paddingBottom: 25,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
 
   paragraph: {
     flex: 1,
-    paddingLeft: 20
-    
+    paddingLeft: 20,
   },
 
   titleStyle: {
     color: THEME.COLORS.GRAY_100,
     fontSize: THEME.FONT_SIZE.MD,
     fontWeight: "normal",
-
-    
   },
   titleStyleBold: {
     color: THEME.COLORS.GRAY_100,

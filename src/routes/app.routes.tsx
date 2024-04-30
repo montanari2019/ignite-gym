@@ -12,6 +12,7 @@ import HistorySVG from "../assets/history.svg";
 import ProfileSVG from "../assets/profile.svg";
 import { THEME } from "../themes";
 import { Platform } from "react-native";
+import { AuthRoutes } from "./auth.routes";
 
 type AuthRoutesProps = {
   home: undefined;
@@ -73,6 +74,7 @@ export function AppRoutes() {
       <Screen name="exercise" component={Exercise} options={{
         tabBarButton: () => null
       }} />
+    
     </Navigator>
   );
 }

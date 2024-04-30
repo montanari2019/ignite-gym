@@ -14,6 +14,7 @@ import { InputComponent } from "../components/InputComponet";
 import { ButtonComponent } from "../components/ButtonComponent";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorRoutesPublicProps } from "../routes/auth.routes";
+import { AuthNavigatorRoutesPrivadeProps } from "../routes/app.routes";
 
 export function SignIn() {
 
@@ -22,6 +23,9 @@ export function SignIn() {
 
   function handleNavigateSingUp(){
     navigator.navigate('signUp')
+  }
+  function handleNavigateHomeAuth(){
+    navigator.navigate('homeAuth')
   }
   return (
     <ScrollView
@@ -54,7 +58,7 @@ export function SignIn() {
               key={"inputSenha"}
             />
 
-            <ButtonComponent variant="SOLID" title="Acessar" />
+            <ButtonComponent variant="SOLID" title="Acessar" onPress={handleNavigateHomeAuth} />
 
             <View>
               <Text style={styled.titleSectionFormsStyle}>

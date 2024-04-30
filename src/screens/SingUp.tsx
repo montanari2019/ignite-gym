@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   SafeAreaView,
   ScrollView,
@@ -14,10 +15,11 @@ import { InputComponent } from "../components/InputComponet";
 import { ButtonComponent } from "../components/ButtonComponent";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorRoutesPublicProps } from "../routes/auth.routes";
-import * as yup from "yup" 
-import { yupResolver } from "@hookform/resolvers/yup"
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import { Controller, useForm } from "react-hook-form";
+import { URL_HOST_API } from "../utils/utils";
 
 type FormsDataProps = {
   name: string;
@@ -28,41 +30,86 @@ type FormsDataProps = {
 
 const singUpSchema = yup.object({
   name: yup
-   .string()
-   .required("O nome é obrigatório")
-   .min(3, "O nome deve ter no mínimo 3 caracteres"),
+    .string()
+    .required("O nome é obrigatório")
+    .min(3, "O nome deve ter no mínimo 3 caracteres"),
   email: yup
-   .string()
-   .email("Insira um email válido")
-   .required("O email é obrigatório"),
+    .string()
+    .email("Insira um email válido")
+    .required("O email é obrigatório"),
 
   password: yup
-   .string()
-   .required("A senha é obrigatória")
-   .min(6, "A senha deve ter no mínimo 6 caracteres")
-   .matches(
+    .string()
+    .required("A senha é obrigatória")
+    .min(6, "A senha deve ter no mínimo 6 caracteres")
+    .matches(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
       "A senha deve conter letras maiúsculas, minúsculas, números e caracteres especiais"
     ),
   password_confirm: yup
-   .string()
-   .required("A confirmação da senha é obrigatória")
-   .oneOf([yup.ref("password"),], "As senhas devem ser iguais"),
-})
+    .string()
+    .required("A confirmação da senha é obrigatória")
+    .oneOf([yup.ref("password")], "As senhas devem ser iguais"),
+});
 
 export function SingUp() {
   const navigator = useNavigation();
 
-  const { control, handleSubmit, formState: { errors }, } = useForm<FormsDataProps>({
-    resolver: yupResolver(singUpSchema)
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormsDataProps>({
+    resolver: yupResolver(singUpSchema),
   });
 
   function handleNavigateSingIn() {
     navigator.goBack();
   }
 
-  function handleSingUp(data: FormsDataProps) {
+  async function handleSingUp({ email, name, password }: FormsDataProps) {
     // console.log(data)
+
+
+    try {
+      const request = await fetch(`${URL_HOST_API}/users`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, name, password }),
+      });
+
+      const response = await request.json();
+
+      console.log(response)
+      if(response.status === 'error'){
+        Alert.alert("SingUp", response.message)
+         
+      }
+
+      else{
+        Alert.alert("SingUp", response.message, [
+          {
+            text: "Fazer Login",
+            onPress: () => {
+              reset()
+              handleNavigateSingIn()
+            },
+          }
+        ])
+
+      }
+     
+      
+
+      
+    } catch (error) {
+      Alert.alert("SingUp", 'Ocorreu um erro inesperado, por favor tente mais tarde!')
+      console.log(error);
+    }
   }
   return (
     <ScrollView
@@ -90,7 +137,6 @@ export function SingUp() {
               <Controller
                 control={control}
                 name="name"
-                
                 render={({ field: { onChange, value } }) => (
                   <InputComponent
                     placeholder="Nome"
@@ -107,7 +153,6 @@ export function SingUp() {
               <Controller
                 control={control}
                 name="email"
-               
                 render={({ field: { onChange, value } }) => (
                   <InputComponent
                     placeholder="Email"
@@ -192,8 +237,8 @@ const styled = StyleSheet.create({
     justifyContent: "space-around",
   },
 
-  sectionInputDisplay:{
-    gap:5
+  sectionInputDisplay: {
+    gap: 5,
   },
 
   backgroundImgStyle: {
