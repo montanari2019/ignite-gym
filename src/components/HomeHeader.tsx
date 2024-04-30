@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorRoutesPrivadeProps } from "../routes/app.routes";
 import { useAuth } from "../context/AuthHook";
 import userPhotoDefault from "../assets/userPhotoDefault.png"
+import { URL_HOST_API } from "../utils/utils";
 export function HomeHeader() {
 
   const navigation = useNavigation<AuthNavigatorRoutesPrivadeProps>()
@@ -18,7 +19,7 @@ export function HomeHeader() {
     <View style={styled.container}>
       <Avatar
         sizeImgProps="MEDIUM"
-        source={user.avatar ? {uri: user.avatar} : userPhotoDefault}
+        source={user.avatar ? {uri: `${URL_HOST_API}/avatar/${user.avatar}`} : userPhotoDefault}
       />
       <View style={styled.paragraph}>
         <Text style={styled.titleStyle}>Olá, </Text>

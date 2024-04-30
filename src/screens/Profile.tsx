@@ -20,6 +20,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useAuth } from "../context/AuthHook";
 import { PatchPhotoUploadForm } from "./@Fetch";
 import userPhotoDefault from "../assets/userPhotoDefault.png"
+import { URL_HOST_API } from "../utils/utils";
 
 type FormsDataProps = {
   name: string;
@@ -118,6 +119,8 @@ export function Profile() {
 
         userPhotoUploadForm.append('avatar', photoFile);
 
+        console.log(userPhotoUploadForm)
+
       await PatchPhotoUploadForm(user.token, userPhotoUploadForm)
 
 
@@ -133,7 +136,7 @@ export function Profile() {
         <View style={styled.container}>
           <Avatar
             sizeImgProps="LARGE"
-            source={user.avatar ? {uri: user.avatar} : userPhotoDefault}
+            source={user.avatar ? {uri: `${URL_HOST_API}/avatar/${user.avatar}`} : userPhotoDefault}
           />
           <TouchableOpacity
             style={styled.containerButton}

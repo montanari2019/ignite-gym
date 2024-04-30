@@ -173,6 +173,7 @@ export async function PatchPhotoUploadForm(token:string, dataForm:any){
     const request = await fetch(`${URL_HOST_API}/users/avatar`, {
         method: "PATCH",
         headers: {
+          Accept: "application/json",
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
