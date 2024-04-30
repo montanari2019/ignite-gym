@@ -8,3 +8,14 @@ export interface AuthContextDataProps {
 export const AuthContext = createContext<AuthContextDataProps>(
   {} as AuthContextDataProps
 );
+
+type AuthContextProviderProps = {
+    children: React.ReactNode;
+}
+export function AuthContextComponent({ children }:AuthContextProviderProps){
+    return(
+        <AuthContext.Provider value={{user: {}} as AuthContextDataProps}>
+            {children}
+        </AuthContext.Provider>
+    )
+}
