@@ -44,8 +44,8 @@ const singInSchema = yup.object({
 export function SignIn() {
   const navigator = useNavigation<AuthNavigatorRoutesPublicProps>();
 
-  const { handleSingIn } = useAuth();
-  const [isLoading, setIsLoading] = useState(false)
+  const { handleSingIn, loadingStorageData } = useAuth();
+  const [isLoading, setIsLoading] = useState(loadingStorageData)
 
   const { control, handleSubmit, reset, formState: { errors },} = useForm<FormsDataProps>({
     resolver: yupResolver(singInSchema),
@@ -54,9 +54,7 @@ export function SignIn() {
   function handleNavigateSingUp() {
     navigator.navigate("signUp");
   }
-  function handleNavigateHomeAuth() {
-    navigator.navigate("homeAuth");
-  }
+
 
   async function handleSingInComponent({ email, password }: FormsDataProps) {
     try {
@@ -148,6 +146,7 @@ export function SignIn() {
               <ButtonComponent
                 variant="OUTLINE"
                 title="Criar conta"
+                isLoading={isLoading}
                 onPress={handleNavigateSingUp}
               />
             </View>

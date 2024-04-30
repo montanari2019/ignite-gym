@@ -64,10 +64,10 @@ const styled = StyleSheet.create({
     borderWidth: 1,
     borderColor: THEME.COLORS.GREEN_700,
     marginTop: 16,
-    backgroundColor: THEME.COLORS.GREEN_700,
+    backgroundColor: THEME.COLORS.GRAY_700,
     alignItems: "center",
     justifyContent: "center",
-    opacity: 0.4,
+    // opacity: 0.4,
   },
   buttonDisabledText: {
     color: THEME.COLORS.GRAY_500,

@@ -4,27 +4,29 @@ import { Avatar } from "./ImgUser";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorRoutesPrivadeProps } from "../routes/app.routes";
-
+import { useAuth } from "../context/AuthHook";
+import userPhotoDefault from "../assets/userPhotoDefault.png"
 export function HomeHeader() {
 
   const navigation = useNavigation<AuthNavigatorRoutesPrivadeProps>()
+
+  const  { user, handleSingOut } = useAuth()
+
 
  
   return (
     <View style={styled.container}>
       <Avatar
         sizeImgProps="MEDIUM"
-        source={{
-          uri: "https://github.com/montanari2019.png",
-        }}
+        source={user.avatar ? {uri: user.avatar} : userPhotoDefault}
       />
       <View style={styled.paragraph}>
         <Text style={styled.titleStyle}>Olá, </Text>
-        <Text style={styled.titleStyleBold}>Rodrigo Gonçalves </Text>
+        <Text style={styled.titleStyleBold}>{user.name}</Text>
       </View>
 
       <TouchableOpacity>
-        <MaterialIcons name="logout" size={28} color={THEME.COLORS.GRAY_100} />
+        <MaterialIcons name="logout" size={28} color={THEME.COLORS.GRAY_100} onPress={handleSingOut} />
       </TouchableOpacity>
     </View>
   );

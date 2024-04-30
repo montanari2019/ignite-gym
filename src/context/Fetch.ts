@@ -3,7 +3,7 @@ import { URL_HOST_API } from "../utils/utils";
 
 export async function GetSession(email:string, password:string){
 
-
+console.log(URL_HOST_API)
     try {
     const request = await fetch(`${URL_HOST_API}/sessions`, {
         method: "POST",
@@ -16,7 +16,7 @@ export async function GetSession(email:string, password:string){
 
       const response = await request.json();
 
-      console.log(response)
+      // console.log(response)
 
       if(response.status === 'error'){
         throw new AppError(response.message)
