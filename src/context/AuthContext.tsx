@@ -20,6 +20,7 @@ type AuthContextProviderProps = {
 export function AuthContextComponent({ children }: AuthContextProviderProps) {
   const [user, setUser] = useState<UserDTO>({} as UserDTO);
   const [loadingStorageData, setLoadingStorageData] = useState(true);
+  console.log("Token: ", user)
 
   useEffect(() => {
     loadUserData();

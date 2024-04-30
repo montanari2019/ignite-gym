@@ -44,7 +44,7 @@ const styled = StyleSheet.create({
         color: THEME.COLORS.GRAY_300,
     },
     containerTextBold:{
-  
+      textTransform: "capitalize",
         fontSize: THEME.FONT_SIZE.MD,
         fontWeight: 'bold',
         color: THEME.COLORS.GRAY_100,

@@ -9,7 +9,6 @@ import { AppRoutes } from "./app.routes";
 type AuthRoutesProps = {
     signIn: undefined;
     signUp: undefined;
-    homeAuth: undefined;
 }
 
 export type AuthNavigatorRoutesPublicProps  = NativeStackNavigationProp<AuthRoutesProps>
@@ -20,7 +19,6 @@ export function AuthRoutes() {
     <Navigator screenOptions={{headerShown: false}}>
       <Screen name="signIn" component={SignIn} />
       <Screen name="signUp" component={SingUp} />
-      <Screen name="homeAuth" component={AppRoutes} />
     </Navigator>
   );
 }

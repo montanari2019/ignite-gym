@@ -13,12 +13,7 @@ interface ButtonComponentProps extends TouchableOpacityProps {
   isLoading?: boolean;
 }
 
-export function ButtonComponent({
-  title,
-  isLoading,
-  variant = "SOLID",
-  ...resto
-}: ButtonComponentProps) {
+export function ButtonComponent({ title, isLoading, variant = "SOLID", ...resto}: ButtonComponentProps) {
   const containerStyle = [
     styled.buttonSolid,
     variant === "OUTLINE" && styled.buttonOutline,
@@ -29,10 +24,13 @@ export function ButtonComponent({
     variant === "OUTLINE" && styled.buttonOutlineText,
     isLoading && styled.buttonDisabledText,
   ];
+
+
+
   return (
-    <TouchableOpacity {...resto} style={containerStyle}>
+    <TouchableOpacity disabled={isLoading} {...resto} style={containerStyle}>
       {isLoading ? (
-        <Loading />
+        <Loading color={isLoading && THEME.COLORS.PURPLE_500} />
       ) : (
         <Text style={containerTextStyle}>{title}</Text>
       )}
@@ -62,15 +60,16 @@ const styled = StyleSheet.create({
     height: 56,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: THEME.COLORS.GREEN_700,
+    borderColor: THEME.COLORS.PURPLE_500,
     marginTop: 16,
     backgroundColor: THEME.COLORS.GRAY_700,
     alignItems: "center",
+    
     justifyContent: "center",
     // opacity: 0.4,
   },
   buttonDisabledText: {
-    color: THEME.COLORS.GRAY_500,
+    color: THEME.COLORS.PURPLE_500,
     fontSize: THEME.FONT_SIZE.MD,
     fontWeight: "bold",
     // textAlign: 'ce'

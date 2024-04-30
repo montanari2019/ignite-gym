@@ -1,4 +1,5 @@
 import {
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -9,63 +10,152 @@ import {
 import { THEME } from "../themes";
 import { MaterialIcons } from "@expo/vector-icons";
 import BodyIcon from "../assets/body.svg";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import SeriesLogo from "../assets/series.svg";
 import RepeticoesLogo from "../assets/repetitions.svg";
 import { ButtonComponent } from "../components/ButtonComponent";
+import { useEffect, useState } from "react";
+import { GetExerciosById, PostExerciosRegisterById } from "./@Fetch";
+import { useAuth } from "../context/AuthHook";
+import { ExercisesDTO } from "../dtos/Exercises.DTO";
+import { AppError } from "../utils/App.Error";
+import { URL_HOST_DEMO, URL_HOST_THUMB } from "../utils/utils";
+import { LoadingShimmer } from "../components/LoadingShimmer";
+import { AuthNavigatorRoutesPrivadeProps } from "../routes/app.routes";
+
+type RoutesParamsProps = {
+  id: string;
+};
 
 export function Exercise() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<AuthNavigatorRoutesPrivadeProps>();
+  const route = useRoute();
+  const [loadingDataExercises, setLoadingDataExercises] = useState(false);
+  const [loadingRegisterExercises, setLoadingRegisterExercises] = useState(false);
+  const [exercisesDetails, setExercisesDetails] = useState<ExercisesDTO>({} as ExercisesDTO);
+
+  const { id } = route.params as RoutesParamsProps;
+
+  const { user, handleSingOut } = useAuth();
 
   function handleGoBack() {
     navigation.goBack();
   }
+  function handleHistory() {
+    navigation.navigate("history");
+  }
+
+  async function LoadingGetExerciciosByGroup() {
+    try {
+      setLoadingDataExercises(true);
+
+      const request = await GetExerciosById(user.token, id);
+
+      setExercisesDetails(request);
+    } catch (error) {
+      setLoadingDataExercises(true);
+      if (error instanceof AppError) {
+        Alert.alert("Exercícios", error.message);
+      } else {
+        Alert.alert("Exercícios", "Não foi possível carregar o exercísio");
+        console.log(error);
+      }
+    } finally {
+      setLoadingDataExercises(false);
+    }
+  }
+  async function RegiterExerciciosByGroup() {
+    try {
+      setLoadingRegisterExercises(true);
+
+      const request = await PostExerciosRegisterById(user.token, id);
+
+      await Alert.alert("Exercício", request.message,  [
+        {
+          text: 'Ok',
+          onPress: () => {
+            handleHistory()
+          }
+        }
+      ]);
+      
+      
+    } catch (error) {
+      setLoadingRegisterExercises(true);
+      if (error instanceof AppError) {
+        if (error.message === "token.invalid") {
+          Alert.alert("Exercício", "Token expirado, você voltará para login");
+          return handleSingOut();
+        }
+        Alert.alert("Exercício", error.message);
+      } else {
+        Alert.alert("Exercício", "Não foi possível registrar o exercísio");
+        console.log(error);
+      }
+    } finally {
+      setLoadingRegisterExercises(false);
+    }
+  }
+
+  useEffect(() => {
+    LoadingGetExerciciosByGroup();
+  }, [id]);
   return (
-    <View style={styled.container}>
-      <View style={styled.header}>
-        <View style={styled.sectionHeaderLeft}>
-          <TouchableOpacity onPress={handleGoBack}>
-            <MaterialIcons
-              name="arrow-back"
-              size={24}
-              color={THEME.COLORS.GREEN_500}
-            />
-          </TouchableOpacity>
-          <Text style={styled.title}>Puxada frontal</Text>
-        </View>
-
-        <View style={styled.sectionHeaderRigth}>
-          <BodyIcon />
-          <Text style={styled.titleParagraph}>Costas</Text>
-        </View>
-      </View>
-      <ScrollView>
-        <View style={styled.imgContainer}>
-          <Image
-            style={styled.imgStyle}
-            source={{
-              uri: "https://www.feitodeiridium.com.br/wp-content/uploads/2016/07/remada-unilateral-2.jpg",
-            }}
-          />
-        </View>
-
-        <View style={styled.sectionFooter}>
-          <View style={styled.sectionDescricaoDisplay}>
-            <View style={styled.sectionDescricao}>
-              <SeriesLogo />
-              <Text style={styled.desctiptionText}>3 séries</Text>
-            </View>
-            <View style={styled.sectionDescricao}>
-              <RepeticoesLogo />
-              <Text style={styled.desctiptionText}>12 repetições</Text>
-            </View>
+    <LoadingShimmer isLoading={loadingDataExercises}>
+      <View style={styled.container}>
+        <View style={styled.header}>
+          <View style={styled.sectionHeaderLeft}>
+            <TouchableOpacity onPress={handleGoBack}>
+              <MaterialIcons
+                name="arrow-back"
+                size={24}
+                color={THEME.COLORS.GREEN_500}
+              />
+            </TouchableOpacity>
+            <Text style={styled.title}>{exercisesDetails.name}</Text>
           </View>
 
-          <ButtonComponent title="Marcar como realizado" />
+          <View style={styled.sectionHeaderRigth}>
+            <BodyIcon />
+            <Text style={styled.titleParagraph}>{exercisesDetails.group}</Text>
+          </View>
         </View>
-      </ScrollView>
-    </View>
+        <ScrollView>
+          <View style={styled.imgContainer}>
+            <Image
+              style={styled.imgStyle}
+              source={{
+                uri: `${URL_HOST_DEMO}/${exercisesDetails.demo}`,
+              }}
+            />
+          </View>
+
+          <View style={styled.sectionFooter}>
+            <View style={styled.sectionDescricaoDisplay}>
+              <View style={styled.sectionDescricao}>
+                <SeriesLogo />
+                <Text style={styled.desctiptionText}>
+                  {exercisesDetails.series} séries
+                </Text>
+              </View>
+              <View style={styled.sectionDescricao}>
+                <RepeticoesLogo />
+                <Text style={styled.desctiptionText}>
+                  {exercisesDetails.repetitions} repetições
+                </Text>
+              </View>
+            </View>
+
+            <ButtonComponent
+              title="Marcar como realizado"
+              onPress={RegiterExerciciosByGroup}
+              isLoading={loadingRegisterExercises}
+            />
+          </View>
+        </ScrollView>
+      </View>
+    </LoadingShimmer>
   );
 }
 
@@ -98,6 +188,7 @@ const styled = StyleSheet.create({
   title: {
     fontSize: THEME.FONT_SIZE.LG,
     fontWeight: "bold",
+    textTransform: "capitalize",
     marginTop: 8,
     color: THEME.COLORS.GRAY_100,
   },
@@ -105,6 +196,7 @@ const styled = StyleSheet.create({
   titleParagraph: {
     fontSize: THEME.FONT_SIZE.MD,
     fontWeight: "normal",
+    textTransform: "capitalize",
     // marginTop: 8,
     color: THEME.COLORS.GRAY_300,
   },

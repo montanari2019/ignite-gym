@@ -1,3 +1,5 @@
 // export const URL_HOST_API = "http://localhost:3333"
 export const URL_HOST_API = "http://192.168.152.192:3333"
+export const URL_HOST_THUMB = "http://192.168.152.192:3333/exercise/thumb"
+export const URL_HOST_DEMO = "http://192.168.152.192:3333/exercise/demo"
 // export const URL_HOST_API = "https://ignitegym-api-teste.onrender.com"

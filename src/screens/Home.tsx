@@ -1,11 +1,24 @@
-import { FlatList, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { HomeHeader } from "../components/HomeHeader";
 import { GroupButton } from "../components/GroupButton";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { THEME } from "../themes";
 import { CardExecicio } from "../components/CardExercise";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { AuthNavigatorRoutesPrivadeProps } from "../routes/app.routes";
+import { AppError } from "../utils/App.Error";
+import { useAuth } from "../context/AuthHook";
+import { GetExerciosByGroup, GetGroupButtons } from "./@Fetch";
+import { ExercisesDTO } from "../dtos/Exercises.DTO";
+import { URL_HOST_THUMB } from "../utils/utils";
+import { LoadingShimmer } from "../components/LoadingShimmer";
 
 const buttonItens = [
   "Costas",
@@ -18,54 +31,78 @@ const buttonItens = [
   "peito",
 ];
 
-const exerciciosDefault = [
-  {
-    id: "1",
-    title: "Puxada frontal",
-    subTitle: "3 séries x 12 repetições",
-    imgUrl:
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9gcQ7ksuOP52IGREtf6FFgxPefC6I5ltjl8XE65VjbA&s",
-  },
-  {
-    id: "2",
-    title: "Remada curvada",
-    subTitle: "3 séries x 12 repetições",
-    imgUrl:
-      "https://p2.trrsf.com/image/fget/cf/774/0/images.terra.com/2023/05/05/1301740817-remada-curvada.jpg",
-  },
-  {
-    id: "3",
-    title: "Remada unilateral",
-    subTitle: "3 séries x 12 repetições",
-    imgUrl:
-      "https://www.feitodeiridium.com.br/wp-content/uploads/2016/07/remada-unilateral-2.jpg",
-  },
-  {
-    id: "4",
-    title: "Levantamento terra",
-    subTitle: "3 séries x 12 repetições",
-    imgUrl:
-      "https://cdn.fisiculturismo.com.br/monthly_2017_11/levantamento-terra.jpg.cbf57ca5cca0493e2f38cfa8b76bd59d.jpg",
-  },
-];
-
-type ExercicioProps = typeof exerciciosDefault;
 export function Home() {
-  const [buttonPress, setButtonPress] = useState("");
-  const [exercicios, setExercicios] = useState<ExercicioProps>(exerciciosDefault);
+  const [groupButtonPress, setGroupButtonPress] = useState("");
+  const [groups, setGroups] = useState<string[]>([]);
+  const [exercicios, setExercicios] = useState<ExercisesDTO[]>([]);
+  const [loadingDataExercises, setLoadingDataExercises] = useState(false);
 
-  const navigation = useNavigation<AuthNavigatorRoutesPrivadeProps>()
+  const navigation = useNavigation<AuthNavigatorRoutesPrivadeProps>();
 
-  function handleOpenExerciseCardDetails(){
-    navigation.navigate("exercise")
+  const { user } = useAuth();
+
+  useEffect(() => {
+    LoadingGetGrupos();
+  }, []);
+
+  function handleOpenExerciseCardDetails(id: string) {
+    navigation.navigate("exercise", {id});
   }
+
+  async function LoadingGetGrupos() {
+    try {
+      const request = await GetGroupButtons(user.token);
+
+      setGroups(request);
+      setGroupButtonPress(request[0]);
+    } catch (error) {
+      if (error instanceof AppError) {
+        Alert.alert("Groups", error.message);
+      } else {
+        Alert.alert("Groups", "Não foi possível carregar os grupos musculares");
+        console.log(error);
+      }
+    }
+  }
+
+  async function LoadingGetExerciciosByGroup() {
+    if (groupButtonPress === "") {
+      return;
+    }
+    try {
+      setLoadingDataExercises(true);
+
+      const request = await GetExerciosByGroup(user.token, groupButtonPress);
+
+      setExercicios(request);
+    } catch (error) {
+      setLoadingDataExercises(true);
+      if (error instanceof AppError) {
+        Alert.alert("Exercícios", error.message);
+      } else {
+        Alert.alert(
+          "Exercícios",
+          "Não foi possível carregar os grupos musculares"
+        );
+        console.log(error);
+      }
+    } finally {
+      setLoadingDataExercises(false);
+    }
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      LoadingGetExerciciosByGroup();
+    }, [groupButtonPress])
+  );
   return (
     <View style={{ flex: 1 }}>
       <HomeHeader />
 
       <FlatList
         style={{ maxHeight: 80 }}
-        data={buttonItens}
+        data={groups}
         keyExtractor={(item) => item}
         contentContainerStyle={{
           maxHeight: 70,
@@ -75,39 +112,53 @@ export function Home() {
         }}
         horizontal
         showsHorizontalScrollIndicator={false}
+        ListEmptyComponent={() => {
+          return (
+            <Text style={styled.titleStyle}>
+              Lista de grupos musculares vazia
+            </Text>
+          );
+        }}
         renderItem={({ item }) => (
           <GroupButton
             titelButton={item}
-            isActive={buttonPress === item}
-            onPress={() => setButtonPress(item)}
+            isActive={groupButtonPress === item}
+            onPress={() => setGroupButtonPress(item)}
           />
         )}
       />
 
-      <View style={styled.sectionPaiExecicio}>
-        <View style={styled.sectionExecicio}>
-          <Text style={styled.titleStyleBold}>Exercícios</Text>
-          <Text style={styled.titleStyle}>4</Text>
-        </View>
+      <LoadingShimmer isLoading={loadingDataExercises}>
+        <View style={styled.sectionPaiExecicio}>
+          <View style={styled.sectionExecicio}>
+            <Text style={styled.titleStyleBold}>Exercícios</Text>
+            <Text style={styled.titleStyle}>4</Text>
+          </View>
 
-        <FlatList
-          data={exercicios}
-          keyExtractor={(item) => String(item.id + item.title)}
-          contentContainerStyle={{
-            gap: 5,
-            paddingBottom: 20,
-          }}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <CardExecicio
-              title={item.title}
-              subTitle={item.subTitle}
-              imgUrl={item.imgUrl}
-              onPress={() => handleOpenExerciseCardDetails()}
-            />
-          )}
-        />
-      </View>
+          <FlatList
+            data={exercicios}
+            keyExtractor={(item) => String(item.id)}
+            contentContainerStyle={{
+              gap: 5,
+              paddingBottom: 20,
+            }}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <CardExecicio
+                title={item.name}
+                subTitle={`${item.series} séries x ${item.repetitions} repetições`}
+                imgUrl={`${URL_HOST_THUMB}/${item.thumb}`}
+                onPress={() => handleOpenExerciseCardDetails(String(item.id))}
+              />
+            )}
+            ListEmptyComponent={() => {
+              return (
+                <Text style={styled.titleStyle}>Lista de exercícios vazia</Text>
+              );
+            }}
+          />
+        </View>
+      </LoadingShimmer>
     </View>
   );
 }

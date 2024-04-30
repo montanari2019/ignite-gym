@@ -1,13 +1,14 @@
-import { StyleSheet, TextInput, TextInputProps } from "react-native";
+import { StyleSheet, Text, TextInput, TextInputProps } from "react-native";
 import { THEME } from "../themes";
 import { useState } from "react";
 
 
 interface InputProfile extends TextInputProps{
     disabled?: boolean;
+    errorMessage?:string
 }
 
-export function InputProfile({disabled = false,...resto}:InputProfile) {
+export function InputProfile({  errorMessage,disabled = false,...resto}:InputProfile) {
 
     const [isFocused, setIsFocused] = useState(false);
     const [isFilled, setIsFilled] = useState(false);
@@ -34,6 +35,7 @@ export function InputProfile({disabled = false,...resto}:InputProfile) {
 
   return (
     <>
+     {errorMessage && <Text style={styled.textErrorMessage}>{errorMessage}</Text>}
       <TextInput
         {...resto}
         placeholderTextColor={ THEME.COLORS.GRAY_300}
@@ -94,7 +96,12 @@ const styled = StyleSheet.create({
         padding: 15,
         backgroundColor: THEME.COLORS.GRAY_500
     },
-
+    
+    textErrorMessage: {
+      color: THEME.COLORS.DANGER_500,
+      fontSize: THEME.FONT_SIZE.SM,
+      fontWeight: "normal",
+    },
     
     containerDisabled:{
         flex: 1,
@@ -105,6 +112,7 @@ const styled = StyleSheet.create({
         borderColor: THEME.COLORS.GRAY_700,
         color: THEME.COLORS.GRAY_300,
         padding: 15,
+        opacity: 0.5,
         backgroundColor: THEME.COLORS.GRAY_600
     },
 })

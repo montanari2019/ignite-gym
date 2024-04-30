@@ -1,57 +1,58 @@
-import { SectionList, StyleSheet, Text, View } from "react-native";
+import { Alert, SectionList, StyleSheet, Text, View } from "react-native";
 import { ScreenHeader } from "../components/ScreenHeader";
 import { CardHistoricoExercicio } from "../components/CardHistory";
 import { THEME } from "../themes";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+import { useAuth } from "../context/AuthHook";
+import { GetHistoryExerciosByUser } from "./@Fetch";
+import { AppError } from "../utils/App.Error";
+import { useFocusEffect } from "@react-navigation/native";
+import { HistoryDTO } from "../dtos/History,DTO";
 
-const exercicioHistoryDefault = [
-  {
-    title: "26.08.22",
-    data: [
-      {
-        title: "Costas",
-        subTitle: "Puxada frontal",
-        time: "08:56",
-      },
 
-      {
-        title: "Costas",
-        subTitle: "Remada unilateral",
-        time: "08:32",
-      },
-    ],
-  },
-
-  {
-    title: "25.08.22",
-    data: [
-      {
-        title: "Costas",
-        subTitle: "Puxada frontal",
-        time: "11:24",
-      },
-
-      {
-        title: "Costas",
-        subTitle: "Remada unilateral",
-        time: "23:32",
-      },
-    ],
-  },
-];
-
-type ExercicioHistoryProps = typeof exercicioHistoryDefault;
 export function History() {
-  const [exercicioHistory, setExercicioHistory] = useState<ExercicioHistoryProps>(exercicioHistoryDefault);
+  const [exercicioHistory, setExercicioHistory] = useState<HistoryDTO[]>([]);
+  const [loadingDataExercises, setLoadingDataExercises] = useState(false);
+  const { user, handleSingOut } = useAuth();
+
+  
+  async function LoadingGetHistoryByUser() {
+    try {
+      setLoadingDataExercises(true);
+
+      const request = await GetHistoryExerciosByUser(user.token,);
+      setExercicioHistory(request);
+
+
+    } catch (error) {
+      setLoadingDataExercises(true);
+      if (error instanceof AppError) {
+        Alert.alert("Histórico", error.message);
+      } else {
+        Alert.alert("Histórico", "Não foi possível carregar o exercísio");
+        console.log(error);
+      }
+    } finally {
+      setLoadingDataExercises(false);
+    }
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      LoadingGetHistoryByUser();
+    }, [])
+  );
   return (
-    <View>
+    <View style={{flex: 1}}>
       <ScreenHeader title="Histórico de Exercícios" />
       <View style={styled.containerCardHistorico}>
         <SectionList
+        
           sections={exercicioHistory}
-          keyExtractor={(item) => item.time + item.subTitle}
+          keyExtractor={(item) => String(item.id)}
           contentContainerStyle={{
             gap: 10,
+          
           }}
           ListEmptyComponent={() =>{
             return (
@@ -64,9 +65,9 @@ export function History() {
           }}
           renderItem={({ item }) => (
             <CardHistoricoExercicio
-              title={item.title}
-              subTitle={item.subTitle}
-              time={item.time}
+              title={item.group}
+              subTitle={item.name}
+              time={item.hour}
             />
           )}
           renderSectionHeader={({section})=>(
@@ -81,6 +82,7 @@ export function History() {
 const styled = StyleSheet.create({
   containerCardHistorico: {
     margin: 20,
+    // flex: 1,
   },
 
   titleSection:{

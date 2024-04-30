@@ -16,7 +16,7 @@ import { AuthRoutes } from "./auth.routes";
 
 type AuthRoutesProps = {
   home: undefined;
-  exercise: undefined;
+  exercise: {id: string};
   history: undefined;
   profile: undefined;
 };

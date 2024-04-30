@@ -36,7 +36,6 @@ const styled = StyleSheet.create({
   container: {
     width: "100%",
     alignItems: "center",
-    // justifyContent: "space-between",
     backgroundColor: THEME.COLORS.GRAY_600,
     padding: 16,
     paddingTop: 50,
